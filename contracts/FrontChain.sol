@@ -7,6 +7,7 @@ contract FrontChain {
         string name;
         string componentId;
         uint price;
+        bool isSold;
     }
     // componentId => owner
     mapping(string => address) componentOwner;
@@ -52,13 +53,13 @@ contract FrontChain {
 
 
     // [WORKING] REGISTER USER
-    function registerUser(string memory name, string memory userId, uint balance, uint userType) public {
+    function registerUser(string memory name, string memory userId, uint userType) payable public {
         // create new user
         User memory newUser;
         if(userType == 0)
-            newUser = User(name, userId, balance, UserType.SELLER);
+            newUser = User(name, userId, msg.value, UserType.SELLER);
         else
-            newUser = User(name, userId, balance, UserType.BUYER);
+            newUser = User(name, userId, msg.value, UserType.BUYER);
 
         // userId should not be null | Comparing userId string with Null String
         require(keccak256(bytes(newUser.userId)) != keccak256(bytes(NULL_STRING)));
@@ -67,8 +68,8 @@ contract FrontChain {
     }
 
     // [WORKING] PUBLISH COMPONENT - Modifier: onlySeller
-    function publishComponent(string memory name, string memory componentId, uint price) onlyUserType(UserType.SELLER) public{
-        Component memory newComponent = Component(name, componentId, price);
+    function publishComponent(string memory name, string memory componentId) onlyUserType(UserType.SELLER) payable public{
+        Component memory newComponent = Component(name, componentId, msg.value, false);
         // push new component to all component list
         components.push(newComponent);
         // map owner of the new component
@@ -83,7 +84,7 @@ contract FrontChain {
     }
 
     // [WORKING] GET COMPONENT OWNER - Modifier: onlyCeo
-    function getOwnerDetails(string memory componentId) view onlyCeo public returns(address, User memory) {
+    function getOwnerDetails(string memory componentId) view onlyBuyerAndCeo public returns(address, User memory) {
         return (componentOwner[componentId], userAddress[componentOwner[componentId]]);
     }
 
@@ -97,12 +98,24 @@ contract FrontChain {
         // GET OWNER ADDRESS
         address payable ownerAddress = payable(componentOwner[componentId]);
 
+        // sell the component
+        componentDetails[componentId].isSold = true;
+
+        // change components list
+        for(uint i=0; i<components.length; i++){
+            if(keccak256(bytes(components[i].componentId)) == keccak256(bytes(componentId))){
+                // found
+                components[i].isSold = true;
+                break;
+            }
+        }
+
         // Pay Owner
-        ownerAddress.transfer(msg.value);
+        ownerAddress.transfer(componentDetails[componentId].price);
 
         // Handle transaction balances
-        userAddress[ownerAddress].balance += msg.value; // OWNER
-        userAddress[msg.sender].balance += msg.value; // BUYER
+        userAddress[ownerAddress].balance += componentDetails[componentId].price; // OWNER
+        userAddress[msg.sender].balance -= componentDetails[componentId].price; // BUYER
 
         // transfer component mapping to buyer
         componentOwner[componentId] = msg.sender;

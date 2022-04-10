@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import FrontChainContract from "./contracts/FrontChain.json";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
@@ -17,10 +17,10 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
+      const deployedNetwork = FrontChainContract.networks[networkId];
       const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
+        FrontChainContract.abi,
+        deployedNetwork && deployedNetwork.address
       );
 
       // Set web3, accounts, and contract to the state, and then proceed with an
@@ -29,7 +29,7 @@ class App extends Component {
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
+        `Failed to load web3, accounts, or contract. Check console for details.`
       );
       console.error(error);
     }
@@ -38,14 +38,37 @@ class App extends Component {
   runExample = async () => {
     const { accounts, contract } = this.state;
 
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
+    // // Stores a given value, 5 by default.
+    // await contract.methods.set(5).send({ from: accounts[0] });
 
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
+    // // Get the value from the contract to prove it worked.
+    // const response = await contract.methods.get().call();
+
+    // register seller
+    // const response = await contract.methods
+    //   .registerUser("rahul", "u1", 0, 0)
+    //   .send({ from: accounts[0] });
+
+    // publish component
+    // const response = await contract.methods
+    //   .publishComponent("input", "c2", 10)
+    //   .send({ from: accounts[0] });
+
+    // register buyer
+    // const response = await contract.methods
+    //   .registerUser("keshav", "u2", 0, 1)
+    //   .send({ from: accounts[0] });
+
+    // get all components
+    // const response = await contract.methods.getAllComponents().call();
+
+    // get component details
+    // const response = await contract.methods.getOwnerDetails("c2").call();
+
+    // console.log(response);
 
     // Update state with the result.
-    this.setState({ storageValue: response });
+    // this.setState({ storageValue: response });
   };
 
   render() {
