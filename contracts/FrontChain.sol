@@ -32,6 +32,9 @@ contract FrontChain {
 
     string constant NULL_STRING = '';
 
+    event Transfer(address indexed from, address indexed to, uint amount);
+
+
     constructor() {
         ceo = msg.sender;
     }
@@ -68,8 +71,8 @@ contract FrontChain {
     }
 
     // [WORKING] PUBLISH COMPONENT - Modifier: onlySeller
-    function publishComponent(string memory name, string memory componentId) onlyUserType(UserType.SELLER) payable public{
-        Component memory newComponent = Component(name, componentId, msg.value, false);
+    function publishComponent(string memory name, string memory componentId, uint price) onlyUserType(UserType.SELLER) payable public{
+        Component memory newComponent = Component(name, componentId, price, false);
         // push new component to all component list
         components.push(newComponent);
         // map owner of the new component
@@ -86,6 +89,11 @@ contract FrontChain {
     // [WORKING] GET COMPONENT OWNER - Modifier: onlyCeo
     function getOwnerDetails(string memory componentId) view onlyBuyerAndCeo public returns(address, User memory) {
         return (componentOwner[componentId], userAddress[componentOwner[componentId]]);
+    }
+
+    // GET ANY USER from Registered Users
+    function getUser() view public returns (User memory){
+        return userAddress[msg.sender];
     }
 
     // [WORKING] GET COMPONENT DETAILS - Modifier: onlyBuyer || onlyCeo
@@ -110,14 +118,17 @@ contract FrontChain {
             }
         }
 
-        // Pay Owner
-        ownerAddress.transfer(componentDetails[componentId].price);
-
-        // Handle transaction balances
+         // // Handle transaction balances
         userAddress[ownerAddress].balance += componentDetails[componentId].price; // OWNER
         userAddress[msg.sender].balance -= componentDetails[componentId].price; // BUYER
 
         // transfer component mapping to buyer
         componentOwner[componentId] = msg.sender;
+
+        // Pay Owner
+        // ownerAddress.transfer(componentDetails[componentId].price);
+        emit Transfer(msg.sender, ownerAddress,componentDetails[componentId].price);
+
+       
     }
 }

@@ -1,13 +1,22 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import FrontChainContract from "./contracts/FrontChain.json";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import Register from "./components/register";
+import Dashboard from "./components/dashboard";
+import Profile from "./components/profile";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
+import AddComponent from "./components/addComponent";
 
-class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+const App = () => {
+  const [web3, setWeb3] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const [contract, setContract] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
 
-  componentDidMount = async () => {
+  const connectWeb3 = async () => {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
@@ -23,9 +32,17 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address
       );
 
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      const response = await instance.methods.getUser().call({
+        from: accounts[0],
+      });
+      sessionStorage.setItem("USER_DETAILS", JSON.stringify(response));
+      setUserDetails(response);
+
+      // Set web3, accounts, and contract to the state
+      setWeb3(web3);
+      console.log(accounts);
+      setAccounts(accounts);
+      setContract(instance);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -35,62 +52,105 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // // Stores a given value, 5 by default.
-    // await contract.methods.set(5).send({ from: accounts[0] });
-
-    // // Get the value from the contract to prove it worked.
-    // const response = await contract.methods.get().call();
-
-    // register seller
-    // const response = await contract.methods
-    //   .registerUser("rahul", "u1", 0, 0)
-    //   .send({ from: accounts[0] });
-
-    // publish component
-    // const response = await contract.methods
-    //   .publishComponent("input", "c2", 10)
-    //   .send({ from: accounts[0] });
-
-    // register buyer
-    // const response = await contract.methods
-    //   .registerUser("keshav", "u2", 0, 1)
-    //   .send({ from: accounts[0] });
-
-    // get all components
-    // const response = await contract.methods.getAllComponents().call();
-
-    // get component details
-    // const response = await contract.methods.getOwnerDetails("c2").call();
-
-    // console.log(response);
-
-    // Update state with the result.
-    // this.setState({ storageValue: response });
+  const getUserDetails = async (callback) => {
+    const response = await contract.methods.getUser().call({
+      from: accounts[0],
+    });
+    sessionStorage.setItem("USER_DETAILS", JSON.stringify(response));
+    callback();
   };
 
-  render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
-    return (
-      <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 42</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+  useEffect(() => {
+    connectWeb3();
+  }, []);
+
+  return (
+    <div className="App">
+      <div>
+        <h2>FrontChain</h2>
+        <div className="nav-btns">
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              window.location.href = "/register";
+            }}
+          >
+            Register
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              window.location.href = "/dashboard";
+            }}
+          >
+            Dashboard
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              getUserDetails(() => {
+                window.location.href = "/profile";
+              });
+            }}
+          >
+            Profile
+          </Button>
+
+          {userDetails && userDetails[3] == "0" && (
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                window.location.href = "/add-component";
+              }}
+            >
+              Add Component
+            </Button>
+          )}
+        </div>
       </div>
-    );
-  }
-}
+      <hr />
+      <Router>
+        <Routes>
+          <Route
+            path="/register"
+            exact
+            element={
+              <Register web3={web3} contract={contract} accounts={accounts} />
+            }
+          />
+          <Route
+            path="/dashboard"
+            exact
+            element={
+              <Dashboard web3={web3} contract={contract} accounts={accounts} />
+            }
+          />
+          <Route
+            path="/profile"
+            exact
+            element={
+              <Profile web3={web3} contract={contract} accounts={accounts} />
+            }
+          />
+          <Route
+            path="/add-component"
+            exact
+            element={
+              <AddComponent
+                web3={web3}
+                contract={contract}
+                accounts={accounts}
+              />
+            }
+          />
+        </Routes>
+      </Router>
+    </div>
+  );
+};
 
 export default App;
