@@ -29,7 +29,9 @@ const ComponentCard = ({ name, price, cid, web3, contract, accounts }) => {
   const classes = useStyles();
 
   const onViewOwner = async (cid) => {
-    const response = await contract.methods.getOwnerDetails(cid).call();
+    const response = await contract.methods.getOwnerDetails(cid).call({
+      from: accounts[0],
+    });
     setOwnerName(response[1][0]);
     setOwnerAddress(response[1][1]);
   };

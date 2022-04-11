@@ -34,6 +34,5 @@ app.post("/update-json", function (req, res) {
 
 app.get("/read-json", function (req, res) {
   let myJson = require("./data.json");
-  console.log(myJson);
   res.send(myJson);
 });

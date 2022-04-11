@@ -5,7 +5,9 @@ const Dashboard = ({ web3, contract, accounts }) => {
   const [components, setComponents] = useState([]);
 
   const getAllComponents = async () => {
-    const response = await contract.methods.getAllComponents().call();
+    const response = await contract.methods.getAllComponents().call({
+      from: accounts[0],
+    });
     setComponents(response);
   };
 
@@ -14,8 +16,6 @@ const Dashboard = ({ web3, contract, accounts }) => {
       getAllComponents();
     }
   }, [contract]);
-
-  console.log("COMPONENTS => ", components);
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap" }}>

@@ -40,7 +40,6 @@ const App = () => {
 
       // Set web3, accounts, and contract to the state
       setWeb3(web3);
-      console.log(accounts);
       setAccounts(accounts);
       setContract(instance);
     } catch (error) {

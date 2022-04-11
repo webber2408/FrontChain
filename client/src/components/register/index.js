@@ -43,26 +43,13 @@ const Register = ({ web3, contract, accounts }) => {
       userType: getConvertedUserType(formValues.userType),
       userId: uuid(),
     };
-    console.log("NEW USER => ", newUser);
     try {
-      const response = await contract.methods
+      await contract.methods
         .registerUser(newUser.name, newUser.userId, newUser.userType)
         .send({ from: accounts[0], value: parseInt(newUser.balance) });
-      console.log(response);
     } catch (err) {
       console.error("Error registering the user => ", newUser, err);
     }
-  };
-
-  const runExample = async () => {
-    // get component details
-    // const response = await contract.methods.getComponentDetails("c1").call();
-    // console.log(response);
-    // purchase component
-    // const response = await contract.methods
-    //   .purchaseComponent("c1")
-    //   .send({ from: accounts[0] });
-    // console.log(response);
   };
 
   return (
