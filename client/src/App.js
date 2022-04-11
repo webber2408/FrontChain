@@ -5,10 +5,10 @@ import Button from "@material-ui/core/Button";
 import Register from "./components/register";
 import Dashboard from "./components/dashboard";
 import Profile from "./components/profile";
+import AddComponent from "./components/addComponent";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
-import AddComponent from "./components/addComponent";
 
 const App = () => {
   const [web3, setWeb3] = useState(null);
@@ -87,6 +87,7 @@ const App = () => {
           >
             Dashboard
           </Button>
+
           <Button
             variant="outlined"
             color="primary"

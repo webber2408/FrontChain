@@ -55,27 +55,6 @@ const Register = ({ web3, contract, accounts }) => {
   };
 
   const runExample = async () => {
-    // register seller
-    // const response = await contract.methods
-    //   .registerUser("rahul", "u1", 0)
-    //   .send({ from: accounts[0], value: 1 });
-    // console.log(response);
-    // publish component
-    // const response = await contract.methods
-    //   .publishComponent("input", "c1", 4)
-    //   .send({ from: accounts[0] });
-    // console.log(response);
-    // register buyer
-    // const response = await contract.methods
-    //   .registerUser("buyer1", "u2", 1)
-    //   .send({ from: accounts[0], value: 100 });
-    // console.log(response);
-    // get all components
-    // const response = await contract.methods.getAllComponents().call();
-    // console.log(response);
-    // get owner details - temporary permission for Buyer
-    // const response = await contract.methods.getOwnerDetails("c1").call();
-    // console.log(response);
     // get component details
     // const response = await contract.methods.getComponentDetails("c1").call();
     // console.log(response);
@@ -84,11 +63,6 @@ const Register = ({ web3, contract, accounts }) => {
     //   .purchaseComponent("c1")
     //   .send({ from: accounts[0] });
     // console.log(response);
-    // get owner details - temporary permission for Buyer
-    // const response = await contract.methods.getOwnerDetails("c1").call();
-    // console.log(response);
-    // Update state with the result.
-    // this.setState({ storageValue: response });
   };
 
   return (

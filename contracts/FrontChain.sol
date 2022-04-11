@@ -81,8 +81,8 @@ contract FrontChain {
         componentDetails[componentId] = newComponent;
     }
 
-    // [WORKING] GET ALL COMPONENTS - Modifier: onlyBuyer || onlyCeo
-    function getAllComponents() view onlyBuyerAndCeo public returns(Component[] memory) {
+    // [WORKING] GET ALL COMPONENTS
+    function getAllComponents() view public returns(Component[] memory) {
         return components;
     }
 
