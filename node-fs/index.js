@@ -36,3 +36,10 @@ app.get("/read-json", function (req, res) {
   let myJson = require("./data.json");
   res.send(myJson);
 });
+
+app.get("/get-component", (req, res) => {
+  let { cid } = req.query;
+  let { data } = require("./data.json");
+  let component = data.filter((item) => item.componentId == cid)[0];
+  res.send(component);
+});

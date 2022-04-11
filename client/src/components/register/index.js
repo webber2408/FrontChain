@@ -28,6 +28,13 @@ const getConvertedUserType = (userType) => {
 const Register = ({ web3, contract, accounts }) => {
   const [formValues, setFormValues] = useState(defaultValues);
 
+  // if (
+  //   JSON.parse(sessionStorage.getItem("USER_DETAILS")) &&
+  //   JSON.parse(sessionStorage.getItem("USER_DETAILS"))[0] != ""
+  // ) {
+  //   window.location.href = "/profile";
+  // }
+
   const handleInputChange = (e, customName = "") => {
     const { name, value } = e.target;
     setFormValues({
@@ -47,6 +54,7 @@ const Register = ({ web3, contract, accounts }) => {
       await contract.methods
         .registerUser(newUser.name, newUser.userId, newUser.userType)
         .send({ from: accounts[0], value: parseInt(newUser.balance) });
+      window.location.href = "/profile";
     } catch (err) {
       console.error("Error registering the user => ", newUser, err);
     }

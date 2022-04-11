@@ -15,6 +15,10 @@ const defaultValues = {
 const AddComponent = ({ web3, contract, accounts }) => {
   const [formValues, setFormValues] = useState(defaultValues);
 
+  if (JSON.parse(sessionStorage.getItem("USER_DETAILS"))[0] == "") {
+    window.location.href = "/register";
+  }
+
   const handleInputChange = (e, customName = "") => {
     const { name, value } = e.target;
     setFormValues({

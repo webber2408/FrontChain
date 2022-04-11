@@ -8,6 +8,7 @@ contract FrontChain {
         string componentId;
         uint price;
         bool isSold;
+        string ownerUUID;
     }
     // componentId => owner
     mapping(string => address) componentOwner;
@@ -72,7 +73,7 @@ contract FrontChain {
 
     // [WORKING] PUBLISH COMPONENT - Modifier: onlySeller
     function publishComponent(string memory name, string memory componentId, uint price) onlyUserType(UserType.SELLER) payable public{
-        Component memory newComponent = Component(name, componentId, price, false);
+        Component memory newComponent = Component(name, componentId, price, false, userAddress[msg.sender].userId);
         // push new component to all component list
         components.push(newComponent);
         // map owner of the new component
@@ -86,8 +87,8 @@ contract FrontChain {
         return components;
     }
 
-    // [WORKING] GET COMPONENT OWNER - Modifier: onlyCeo
-    function getOwnerDetails(string memory componentId) view onlyBuyerAndCeo public returns(address, User memory) {
+    // [WORKING] GET COMPONENT OWNER
+    function getOwnerDetails(string memory componentId) view public returns(address, User memory) {
         return (componentOwner[componentId], userAddress[componentOwner[componentId]]);
     }
 
@@ -96,8 +97,8 @@ contract FrontChain {
         return userAddress[msg.sender];
     }
 
-    // [WORKING] GET COMPONENT DETAILS - Modifier: onlyBuyer || onlyCeo
-    function getComponentDetails(string memory componentId) view onlyBuyerAndCeo public returns (Component memory) {
+    // [WORKING] GET COMPONENT DETAILS
+    function getComponentDetails(string memory componentId) view public returns (Component memory) {
         return componentDetails[componentId];
     }
 
@@ -108,12 +109,14 @@ contract FrontChain {
 
         // sell the component
         componentDetails[componentId].isSold = true;
+        componentDetails[componentId].ownerUUID = userAddress[msg.sender].userId;
 
         // change components list
         for(uint i=0; i<components.length; i++){
             if(keccak256(bytes(components[i].componentId)) == keccak256(bytes(componentId))){
                 // found
                 components[i].isSold = true;
+                components[i].ownerUUID = userAddress[msg.sender].userId;
                 break;
             }
         }

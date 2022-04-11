@@ -22,6 +22,10 @@ const Profile = () => {
     setUserDetails(JSON.parse(sessionStorage.getItem("USER_DETAILS")));
   }, []);
 
+  if (JSON.parse(sessionStorage.getItem("USER_DETAILS"))[0] == "") {
+    window.location.href = "/register";
+  }
+
   if (!userDetails) return <></>;
 
   if (!userDetails[0])
