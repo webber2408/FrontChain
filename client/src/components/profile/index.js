@@ -15,12 +15,12 @@ const getUserType = (userType) => {
   }
 };
 
-const Profile = () => {
+const Profile = ({ contract }) => {
   const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
     setUserDetails(JSON.parse(sessionStorage.getItem("USER_DETAILS")));
-  }, []);
+  }, [contract]);
 
   if (JSON.parse(sessionStorage.getItem("USER_DETAILS"))[0] == "") {
     window.location.href = "/register";

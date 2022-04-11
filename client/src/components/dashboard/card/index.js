@@ -9,12 +9,12 @@ import axios from "axios";
 
 const useStyles = makeStyles({
   root: {
-    width: 450,
+    width: 320,
     margin: 20,
     position: "relative",
   },
   rootOwned: {
-    width: 450,
+    width: 320,
     margin: 20,
     backgroundColor: "#e7ffe7",
     position: "relative",
@@ -123,19 +123,19 @@ const ComponentCard = ({
           {!isOwned ? (
             <>
               <Button
-                variant="contained"
+                variant="outlined"
                 color="primary"
                 onClick={() => buyComponent(cid)}
               >
                 Buy
               </Button>
-              <Button variant="contained" onClick={() => onViewOwner(cid)}>
+              <Button variant="outlined" onClick={() => onViewOwner(cid)}>
                 {ownerName ? "Hide" : "View"} Owner
               </Button>
             </>
           ) : (
             <>
-              <Button variant="contained" onClick={() => onUnlock(cid)}>
+              <Button variant="outlined" onClick={() => onUnlock(cid)}>
                 {codeFiles ? "Lock" : "Unlock"} Sanbox
               </Button>
               {showDemo && codeFiles && (

@@ -138,16 +138,15 @@ const App = () => {
                 </Button>
               )}
 
-              {/* <Button
+              <Button
                 variant={"default"}
                 color="primary"
                 onClick={() => {
-                  sessionStorage.removeItem("USER_DETAILS");
-                  window.location.href = "/";
+                  window.location.href = "/profile";
                 }}
               >
-                Logout
-              </Button> */}
+                Link Metamask
+              </Button>
             </>
           )}
         </div>
