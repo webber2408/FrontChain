@@ -9,6 +9,7 @@ contract FrontChain {
         uint price;
         bool isSold;
         string ownerUUID;
+        string description;
     }
     // componentId => owner
     mapping(string => address) componentOwner;
@@ -82,8 +83,8 @@ contract FrontChain {
     }
 
     // [WORKING] PUBLISH COMPONENT - Modifier: onlySeller
-    function publishComponent(string memory name, string memory componentId, uint price) onlyUserType(UserType.SELLER) payable public{
-        Component memory newComponent = Component(name, componentId, price, false, userAddress[msg.sender].userId);
+    function publishComponent(string memory name, string memory componentId, uint price, string memory description) onlyUserType(UserType.SELLER) payable public{
+        Component memory newComponent = Component(name, componentId, price, false, userAddress[msg.sender].userId, description);
         // push new component to all component list
         components.push(newComponent);
         // map owner of the new component
@@ -126,6 +127,9 @@ contract FrontChain {
 
     // [WORKING] PURCHASE COMPONENT - Modifier: Owner can not purchase himself/herself. - onlyBuyer
     function purchaseComponent(string memory componentId) payable onlyUserType(UserType.BUYER) public {
+        // BUYER BALANCE >= COMPONENT PRICE
+        require(userAddress[msg.sender].balance >= componentDetails[componentId].price, "Low Balance");
+
         // GET OWNER ADDRESS
         address payable ownerAddress = payable(componentOwner[componentId]);
 

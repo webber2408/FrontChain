@@ -48,7 +48,7 @@ const Profile = ({ contract }) => {
           <ListItemAvatar>
             <AccountBox />
           </ListItemAvatar>
-          <ListItemText primary="Address" secondary={userDetails[1]} />
+          <ListItemText primary="User ID" secondary={userDetails[1]} />
         </ListItem>
         <ListItem>
           <ListItemAvatar>

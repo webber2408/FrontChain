@@ -112,6 +112,11 @@ const Requests = ({ web3, contract, accounts }) => {
             <div className="paper-text">
               <div>{item[0]}</div>
               <div>
+                <i>Status: </i> {"  "}
+                <span>
+                  <b style={{ color: "green" }}>ACTIVE</b>
+                </span>
+                &nbsp; &nbsp;
                 <i>Posted on:</i>
                 {"  "}
                 <Moment format="D MMM YYYY" withTitle>

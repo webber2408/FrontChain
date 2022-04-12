@@ -6,6 +6,7 @@ import axios from "axios";
 
 const defaultValues = {
   name: "",
+  description: "",
   html: "",
   css: "",
   js: "",
@@ -50,7 +51,8 @@ const AddComponent = ({ web3, contract, accounts }) => {
       .publishComponent(
         newComponent.name,
         newComponent.componentId,
-        parseInt(newComponent.price)
+        parseInt(newComponent.price),
+        newComponent.description
       )
       .send({ from: accounts[0] });
 
@@ -77,12 +79,26 @@ const AddComponent = ({ web3, contract, accounts }) => {
         />
         <br />
         <br />
+        <div className="form-labels">Description</div>
+        <TextField
+          id="description-input"
+          name="description"
+          label=""
+          type="text"
+          variant="outlined"
+          onChange={handleInputChange}
+          className="textField"
+          value={formValues.description}
+          required
+        />
+        <br />
+        <br />
         <div className="form-labels">HTML Code</div>
         <TextareaAutosize
           placeholder="Enter HTML here!"
           minRows={10}
           name="html"
-          style={{ width: "400px" }}
+          style={{ width: "422px" }}
           onChange={handleInputChange}
           value={formValues.html}
         />
@@ -93,7 +109,7 @@ const AddComponent = ({ web3, contract, accounts }) => {
           placeholder="Enter CSS here!"
           minRows={10}
           name="css"
-          style={{ width: "400px" }}
+          style={{ width: "422px" }}
           onChange={handleInputChange}
           value={formValues.css}
         />
@@ -104,7 +120,7 @@ const AddComponent = ({ web3, contract, accounts }) => {
           placeholder="Enter JS here!"
           minRows={10}
           name="js"
-          style={{ width: "400px" }}
+          style={{ width: "422px" }}
           onChange={handleInputChange}
           value={formValues.js}
         />

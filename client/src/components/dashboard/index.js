@@ -35,6 +35,7 @@ const Dashboard = ({ web3, contract, accounts }) => {
               name={item[0]}
               price={item[2]}
               cid={item[1]}
+              description={item[5]}
               web3={web3}
               accounts={accounts}
               contract={contract}

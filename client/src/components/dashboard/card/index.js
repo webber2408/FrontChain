@@ -36,6 +36,7 @@ const ComponentCard = ({
   name,
   price,
   cid,
+  description,
   web3,
   contract,
   accounts,
@@ -117,6 +118,7 @@ const ComponentCard = ({
 
         <CardContent>
           <h1 className={classes.title}>{name}</h1>
+          <h5>{description}</h5>
           <h4>{price} Wei</h4>
         </CardContent>
         <CardActions>

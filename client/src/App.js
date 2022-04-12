@@ -146,7 +146,7 @@ const App = () => {
                   window.location.href = "/requests";
                 }}
               >
-                Requests
+                Feature Requests
               </Button>
 
               <Button
