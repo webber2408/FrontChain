@@ -29,6 +29,16 @@ contract FrontChain {
     // user type
     enum UserType{ SELLER, BUYER}
 
+    struct Request{
+        string description;
+        string reqId;
+        string timestamp;
+    }
+    // reqId => Request
+    mapping(string => Request) requestMap;
+    // ALL REQUESTS
+    Request[] requests;
+
     address ceo;
 
     string constant NULL_STRING = '';
@@ -100,6 +110,18 @@ contract FrontChain {
     // [WORKING] GET COMPONENT DETAILS
     function getComponentDetails(string memory componentId) view public returns (Component memory) {
         return componentDetails[componentId];
+    }
+
+    // ADD REQUEST
+    function addRequest(string memory description, string memory reqId, string memory timestamp) public {
+        Request memory temp = Request(description, reqId, timestamp);
+        // Push new request to all request list
+        requests.push(temp);
+    }
+
+    // GET ALL REQUESTS
+    function getAllRequests() view public returns(Request[] memory){
+        return requests;
     }
 
     // [WORKING] PURCHASE COMPONENT - Modifier: Owner can not purchase himself/herself. - onlyBuyer

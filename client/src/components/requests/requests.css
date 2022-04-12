@@ -1,0 +1,48 @@
+.requests-header {
+  display: flex;
+}
+
+.requests-header > Button {
+  font-size: 24px;
+  padding: 10px !important;
+  width: 25px !important;
+  min-width: 25px !important;
+  height: 25px;
+  border-radius: 100%;
+  margin-top: 18px;
+  margin-left: 10px;
+}
+
+#description-input {
+  min-width: 400px;
+  width: 400px !important;
+}
+
+.add-request-form {
+  margin-bottom: 50px;
+}
+
+.add-request-form > Button {
+  height: 56px;
+  margin-left: 10px;
+}
+
+.paper {
+  padding: 20px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+.paper_header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-weight: 500;
+  color: #6a6a6a;
+}
+.paper-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 32px;
+  padding-top: 14px;
+}

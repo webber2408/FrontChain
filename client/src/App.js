@@ -9,6 +9,7 @@ import AddComponent from "./components/addComponent";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
+import Requests from "./components/requests";
 
 const App = () => {
   const [web3, setWeb3] = useState(null);
@@ -139,6 +140,16 @@ const App = () => {
               )}
 
               <Button
+                variant={pathName == "/requests" ? "contained" : "default"}
+                color="primary"
+                onClick={() => {
+                  window.location.href = "/requests";
+                }}
+              >
+                Requests
+              </Button>
+
+              <Button
                 variant={"default"}
                 color="primary"
                 onClick={() => {
@@ -191,6 +202,13 @@ const App = () => {
                 contract={contract}
                 accounts={accounts}
               />
+            }
+          />
+          <Route
+            path="/requests"
+            exact
+            element={
+              <Requests web3={web3} contract={contract} accounts={accounts} />
             }
           />
         </Routes>
