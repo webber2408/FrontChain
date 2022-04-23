@@ -3,47 +3,59 @@
 pragma solidity ^0.8.12;
 
 contract FrontChain {
+
+    // Struct component used to store the frontend component basic information
+    // It doesn't store the actual codes. Instead it stores a unique UUID which identifies
+    // it uniquely and can be used to fetch the component's codes through a central server.
     struct Component {
         string name;
-        string componentId;
+        string componentId; // UUID for components
         uint price;
         bool isSold;
         string ownerUUID;
         string description;
     }
-    // componentId => owner
+    // MAPPING: componentId => owner
     mapping(string => address) componentOwner;
-    // componentId => Component : To get the component details
+    // MAPPING: componentId => Component : To get the component details
     mapping(string => Component) componentDetails;
-    // all components
+    // Stores all components
     Component[] components;
 
 
+    // Used to store information regarding the user. Every user is identified uniquely by 
+    // a userId which is a unique UUID generated at the time of Register from the DAPP UI.
     struct User{
         string name;
         string userId;
         uint balance;
         UserType userType;
     }
-    // address => User
+    // MAPPING: address => User
     mapping(address => User) userAddress;
-    // user type
+    // ENUM: user type | SELLER => 0; BUYER => 1
     enum UserType{ SELLER, BUYER}
 
+
+    // Stores the information about any feature request for any FE component that is needed by 
+    // the user
     struct Request{
         string description;
-        string reqId;
+        string reqId; // UUID for request | React
         string timestamp;
     }
-    // reqId => Request
+    // MAPPING: reqId => Request
     mapping(string => Request) requestMap;
-    // ALL REQUESTS
+    // Stores all requests
     Request[] requests;
 
+    // stores the address of the contract deployer
     address ceo;
 
+    // stored to compare null string values with
     string constant NULL_STRING = '';
 
+    // Transfer event for cryptocurrency transfer between two accounts.
     event Transfer(address indexed from, address indexed to, uint amount);
 
 
@@ -51,6 +63,7 @@ contract FrontChain {
         ceo = msg.sender;
     }
 
+    // Generic modifier based on enum UserType
     modifier onlyUserType(UserType userType){
         require(userAddress[msg.sender].userType == userType);
         _;
@@ -68,6 +81,7 @@ contract FrontChain {
 
 
     // [WORKING] REGISTER USER
+    // Registers a new user based on his user type and then maps its address with the struct User.
     function registerUser(string memory name, string memory userId, uint userType) payable public {
         // create new user
         User memory newUser;
@@ -82,7 +96,11 @@ contract FrontChain {
         userAddress[msg.sender] = newUser;
     }
 
+
+
     // [WORKING] PUBLISH COMPONENT - Modifier: onlySeller
+    // This function accepts the component's name, its uuid, price and a description and none of the codes
+    // and stores this information onto the blockchain.
     function publishComponent(string memory name, string memory componentId, uint price, string memory description) onlyUserType(UserType.SELLER) payable public{
         Component memory newComponent = Component(name, componentId, price, false, userAddress[msg.sender].userId, description);
         // push new component to all component list

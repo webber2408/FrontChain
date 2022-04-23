@@ -35,6 +35,7 @@ const App = () => {
       const response = await instance.methods.getUser().call({
         from: accounts[0],
       });
+      console.log(accounts);
       sessionStorage.setItem("USER_DETAILS", JSON.stringify(response));
 
       // Set web3, accounts, and contract to the state
