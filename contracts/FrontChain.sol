@@ -2,6 +2,12 @@
 
 pragma solidity ^0.8.12;
 
+interface FrontCoinInterface {
+    function totalSupply() external view returns (uint256);
+    function transferFrom(address owner, address buyer, uint numTokens) external returns (bool);
+    function balanceOf(address tokenOwner) external view returns (uint);
+}
+
 contract FrontChain {
 
     // Struct component used to store the frontend component basic information
@@ -22,7 +28,6 @@ contract FrontChain {
     // Stores all components
     Component[] components;
 
-
     // Used to store information regarding the user. Every user is identified uniquely by 
     // a userId which is a unique UUID generated at the time of Register from the DAPP UI.
     struct User{
@@ -34,8 +39,7 @@ contract FrontChain {
     // MAPPING: address => User
     mapping(address => User) userAddress;
     // ENUM: user type | SELLER => 0; BUYER => 1
-    enum UserType{ SELLER, BUYER}
-
+    enum UserType{ SELLER, BUYER, CEO }
 
     // Stores the information about any feature request for any FE component that is needed by 
     // the user
@@ -58,6 +62,9 @@ contract FrontChain {
     // Transfer event for cryptocurrency transfer between two accounts.
     event Transfer(address indexed from, address indexed to, uint amount);
 
+    address public constant FC_ADDRESS = 0x4fD550913Dd3e93F8DD0312f92F47d5B3B50e8c8;
+    
+    FrontCoinInterface fcInterface = FrontCoinInterface(FC_ADDRESS);
 
     constructor() {
         ceo = msg.sender;
@@ -79,24 +86,45 @@ contract FrontChain {
         _;
     }
 
+    function getFCStartingBalance() view public returns (uint256, uint256) {
+        return (fcInterface.totalSupply(), address(FC_ADDRESS).balance);
+    }
+
+    function getFCUserBalance() view public returns (uint256) {
+        return fcInterface.balanceOf(msg.sender);
+    }
+
+    function isUserCeo() view public returns (bool){
+        return msg.sender == ceo;
+    }
 
     // [WORKING] REGISTER USER
     // Registers a new user based on his user type and then maps its address with the struct User.
     function registerUser(string memory name, string memory userId, uint userType) payable public {
         // create new user
         User memory newUser;
-        if(userType == 0)
-            newUser = User(name, userId, msg.value, UserType.SELLER);
-        else
-            newUser = User(name, userId, msg.value, UserType.BUYER);
+
+        if(msg.sender == ceo){
+            // ceo registering
+            newUser = User(name, userId, fcInterface.balanceOf(msg.sender), UserType.CEO);
+        }else{
+            // other user registering
+            fcInterface.transferFrom(ceo, msg.sender, 100);
+            
+            // update balance of ceo after registration
+            userAddress[ceo].balance = fcInterface.balanceOf(ceo);
+
+            if(userType == 0)
+                newUser = User(name, userId, 100, UserType.SELLER);
+            else
+                newUser = User(name, userId, 100, UserType.BUYER);
+        }
 
         // userId should not be null | Comparing userId string with Null String
         require(keccak256(bytes(newUser.userId)) != keccak256(bytes(NULL_STRING)));
         // map user address to its details
         userAddress[msg.sender] = newUser;
     }
-
-
 
     // [WORKING] PUBLISH COMPONENT - Modifier: onlySeller
     // This function accepts the component's name, its uuid, price and a description and none of the codes
@@ -145,8 +173,6 @@ contract FrontChain {
 
     // [WORKING] PURCHASE COMPONENT - Modifier: Owner can not purchase himself/herself. - onlyBuyer
     function purchaseComponent(string memory componentId) payable onlyUserType(UserType.BUYER) public {
-        // BUYER BALANCE >= COMPONENT PRICE
-        require(userAddress[msg.sender].balance >= componentDetails[componentId].price, "Low Balance");
 
         // GET OWNER ADDRESS
         address payable ownerAddress = payable(componentOwner[componentId]);
@@ -165,17 +191,14 @@ contract FrontChain {
             }
         }
 
-         // // Handle transaction balances
-        userAddress[ownerAddress].balance += componentDetails[componentId].price; // OWNER
-        userAddress[msg.sender].balance -= componentDetails[componentId].price; // BUYER
-
         // transfer component mapping to buyer
         componentOwner[componentId] = msg.sender;
 
         // Pay Owner
-        // ownerAddress.transfer(componentDetails[componentId].price);
-        emit Transfer(msg.sender, ownerAddress,componentDetails[componentId].price);
+        fcInterface.transferFrom(msg.sender, ownerAddress, componentDetails[componentId].price);
 
-       
+        // Change balances
+        userAddress[msg.sender].balance = fcInterface.balanceOf(msg.sender); // BUYER
+        userAddress[ownerAddress].balance = fcInterface.balanceOf(ownerAddress); // SELLER
     }
 }

@@ -17,7 +17,7 @@ const dateOptions = {
   year: "numeric",
 };
 
-const Requests = ({ web3, contract, accounts }) => {
+const Requests = ({ web3, contract, accounts, setShowLoader }) => {
   const [formValues, setFormValues] = useState(defaultValues);
   const [showAddForm, setShowAddForm] = useState(false);
   const [requests, setRequests] = useState(null);
@@ -39,6 +39,7 @@ const Requests = ({ web3, contract, accounts }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setShowLoader(true);
 
     const newRequest = {
       ...formValues,
@@ -58,6 +59,7 @@ const Requests = ({ web3, contract, accounts }) => {
     setFormValues(defaultValues);
     setShowAddForm(false);
     getAlRequests();
+    setShowLoader(false);
   };
 
   const toggleForm = () => {

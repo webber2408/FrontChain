@@ -13,7 +13,7 @@ const defaultValues = {
   price: null,
 };
 
-const AddComponent = ({ web3, contract, accounts }) => {
+const AddComponent = ({ web3, contract, accounts, setShowLoader }) => {
   const [formValues, setFormValues] = useState(defaultValues);
 
   if (JSON.parse(sessionStorage.getItem("USER_DETAILS"))[0] == "") {
@@ -30,6 +30,7 @@ const AddComponent = ({ web3, contract, accounts }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setShowLoader(true);
     const newComponent = {
       ...formValues,
       componentId: uuid(),
@@ -57,6 +58,7 @@ const AddComponent = ({ web3, contract, accounts }) => {
       .send({ from: accounts[0] });
 
     setFormValues(defaultValues);
+    setShowLoader(false);
     window.location.href = "/dashboard";
   };
 
@@ -126,7 +128,7 @@ const AddComponent = ({ web3, contract, accounts }) => {
         />
         <br />
         <br />
-        <div className="form-labels">Price (in Wei)</div>
+        <div className="form-labels">Price (in FRONT)</div>
         <TextField
           id="price-input"
           name="price"

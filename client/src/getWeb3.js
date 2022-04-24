@@ -4,12 +4,31 @@ const getWeb3 = () =>
   new Promise((resolve, reject) => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener("load", async () => {
+      // ROPSTEN
+      // if (window.ethereum) {
+      //   try {
+      //     const provider = new Web3.providers.HttpProvider(
+      //       "https://ropsten.infura.io/v3/b5b1c35116f1438294087b6be09bf47a"
+      //     );
+      //     const web3 = new Web3(provider);
+
+      //     await window.ethereum.enable();
+      //     console.log(web3);
+      //     resolve(web3);
+      //   } catch (error) {
+      //     console.log("Connection error", error);
+      //   }
+      // }
+
       // Modern dapp browsers...
       if (window.ethereum) {
         const web3 = new Web3(window.ethereum);
         try {
           // Request account access if needed
           await window.ethereum.enable();
+          window.ethereum.on("accountsChanged", function (accounts) {
+            window.location.href = "/profile";
+          });
           // Accounts now exposed
           resolve(web3);
         } catch (error) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ComponentCard from "./card";
 
-const Dashboard = ({ web3, contract, accounts }) => {
+const Dashboard = ({ web3, contract, accounts, setShowLoader }) => {
   const [components, setComponents] = useState([]);
   const [currentUserUUID, setCurrentUserUUID] = useState(null);
 
@@ -40,6 +40,7 @@ const Dashboard = ({ web3, contract, accounts }) => {
               accounts={accounts}
               contract={contract}
               isOwned={item[4] == currentUserUUID}
+              setShowLoader={setShowLoader}
             />
           );
         })}

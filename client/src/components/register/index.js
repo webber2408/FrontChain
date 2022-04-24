@@ -13,7 +13,7 @@ import "./register.css";
 const defaultValues = {
   name: "",
   userType: "buyer",
-  balance: null,
+  // balance: null,
 };
 
 const getConvertedUserType = (userType) => {
@@ -25,7 +25,7 @@ const getConvertedUserType = (userType) => {
   }
 };
 
-const Register = ({ web3, contract, accounts }) => {
+const Register = ({ web3, contract, accounts, setShowLoader, isCeo }) => {
   const [formValues, setFormValues] = useState(defaultValues);
 
   // if (
@@ -45,76 +45,92 @@ const Register = ({ web3, contract, accounts }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setShowLoader(true);
     const newUser = {
       ...formValues,
       userType: getConvertedUserType(formValues.userType),
       userId: uuid(),
     };
     try {
+      console.log(accounts);
       await contract.methods
         .registerUser(newUser.name, newUser.userId, newUser.userType)
-        .send({ from: accounts[0], value: parseInt(newUser.balance) });
+        .send({
+          from: accounts[0],
+          //value: parseInt(newUser.balance)
+        });
+      setShowLoader(false);
       window.location.href = "/profile";
     } catch (err) {
       console.error("Error registering the user => ", newUser, err);
     }
   };
 
+  const currentUser = JSON.parse(sessionStorage.getItem("USER_DETAILS"));
+  console.log(isCeo);
+
   return (
     <div className="register">
-      <h4>Hi {accounts && accounts[0]} !</h4>
-      <form onSubmit={handleSubmit} autoComplete={"off"}>
-        <div className="form-labels">Name</div>
-        <TextField
-          id="name-input"
-          name="name"
-          label=""
-          type="text"
-          variant="outlined"
-          onChange={handleInputChange}
-          className="textField"
-          value={formValues.name}
-          required
-        />
-        <br />
-        <br />
-        <div className="form-labels">Starting Balance (in Wei)</div>
-        <TextField
-          id="balance-input"
-          name="balance"
-          label=""
-          type="number"
-          variant="outlined"
-          onChange={handleInputChange}
-          value={formValues.balance}
-          required
-        />
-        <br />
-        <br />
-        <FormControl component="fieldset">
-          <FormLabel component="legend">User Type</FormLabel>
-          <RadioGroup
-            aria-label="userType"
-            name="userType"
-            value={formValues.userType}
-            onChange={(e) => handleInputChange(e, "userType")}
-          >
-            <FormControlLabel value="buyer" control={<Radio />} label="Buyer" />
-            <FormControlLabel
-              value="seller"
-              control={<Radio />}
-              label="Seller"
-            />
-          </RadioGroup>
-        </FormControl>
-        <br />
-        <br />
-        <div className="btn-wrapper">
-          <Button variant="outlined" color="primary" type="submit">
-            Submit
-          </Button>
-        </div>
-      </form>
+      <h4>
+        Hi {isCeo ? "(CEO) " : ""}
+        {accounts && accounts[0]} !
+      </h4>
+      {currentUser && currentUser.userId == "" && currentUser.name == "" && (
+        <form onSubmit={handleSubmit} autoComplete={"off"}>
+          <div className="form-labels">Name</div>
+          <TextField
+            id="name-input"
+            name="name"
+            label=""
+            type="text"
+            variant="outlined"
+            onChange={handleInputChange}
+            className="textField"
+            value={formValues.name}
+            required
+          />
+          {!isCeo && (
+            <>
+              <br />
+              <br />
+              <div className="form-labels">Starting Balance - 100 FRONT</div>
+              <br />
+              <br />
+              <FormControl component="fieldset">
+                <FormLabel component="legend">User Type</FormLabel>
+                <RadioGroup
+                  aria-label="userType"
+                  name="userType"
+                  value={formValues.userType}
+                  onChange={(e) => handleInputChange(e, "userType")}
+                >
+                  <FormControlLabel
+                    value="buyer"
+                    control={<Radio />}
+                    label="Buyer"
+                  />
+                  <FormControlLabel
+                    value="seller"
+                    control={<Radio />}
+                    label="Seller"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </>
+          )}
+
+          <br />
+          <br />
+          <div className="btn-wrapper">
+            <Button variant="outlined" color="primary" type="submit">
+              Submit
+            </Button>
+          </div>
+        </form>
+      )}
+      {currentUser && currentUser.userId != "" && currentUser.name != "" && (
+        <div>You are already registered!</div>
+      )}
     </div>
   );
 };

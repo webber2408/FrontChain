@@ -10,11 +10,14 @@ import getWeb3 from "./getWeb3";
 
 import "./App.css";
 import Requests from "./components/requests";
+import Loader from "./components/loader";
 
 const App = () => {
   const [web3, setWeb3] = useState(null);
+  const [isCeo, setIsCeo] = useState(false);
   const [accounts, setAccounts] = useState(null);
   const [contract, setContract] = useState(null);
+  const [showLoader, setShowLoader] = useState(false);
 
   const connectWeb3 = async () => {
     try {
@@ -23,6 +26,7 @@ const App = () => {
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
+      console.log("ACCOUNTS", accounts);
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
@@ -35,8 +39,14 @@ const App = () => {
       const response = await instance.methods.getUser().call({
         from: accounts[0],
       });
-      console.log(accounts);
+      console.log("RESPONSE", response);
       sessionStorage.setItem("USER_DETAILS", JSON.stringify(response));
+
+      const ceoResponse = await instance.methods.isUserCeo().call({
+        from: accounts[0],
+      });
+      console.log(ceoResponse);
+      setIsCeo(ceoResponse);
 
       // Set web3, accounts, and contract to the state
       setWeb3(web3);
@@ -68,6 +78,7 @@ const App = () => {
 
   return (
     <div className="App">
+      {showLoader && <Loader />}
       <div
         style={{
           display: "flex",
@@ -150,7 +161,7 @@ const App = () => {
                 Feature Requests
               </Button>
 
-              <Button
+              {/* <Button
                 variant={"default"}
                 color="primary"
                 onClick={() => {
@@ -158,7 +169,7 @@ const App = () => {
                 }}
               >
                 Link Metamask
-              </Button>
+              </Button> */}
             </>
           )}
         </div>
@@ -170,28 +181,50 @@ const App = () => {
             path="/"
             exact
             element={
-              <Register web3={web3} contract={contract} accounts={accounts} />
+              <Register
+                web3={web3}
+                contract={contract}
+                accounts={accounts}
+                setShowLoader={setShowLoader}
+                isCeo={isCeo}
+              />
             }
           />
           <Route
             path="/register"
             exact
             element={
-              <Register web3={web3} contract={contract} accounts={accounts} />
+              <Register
+                web3={web3}
+                contract={contract}
+                accounts={accounts}
+                setShowLoader={setShowLoader}
+                isCeo={isCeo}
+              />
             }
           />
           <Route
             path="/dashboard"
             exact
             element={
-              <Dashboard web3={web3} contract={contract} accounts={accounts} />
+              <Dashboard
+                web3={web3}
+                contract={contract}
+                accounts={accounts}
+                setShowLoader={setShowLoader}
+              />
             }
           />
           <Route
             path="/profile"
             exact
             element={
-              <Profile web3={web3} contract={contract} accounts={accounts} />
+              <Profile
+                web3={web3}
+                contract={contract}
+                accounts={accounts}
+                setShowLoader={setShowLoader}
+              />
             }
           />
           <Route
@@ -202,6 +235,7 @@ const App = () => {
                 web3={web3}
                 contract={contract}
                 accounts={accounts}
+                setShowLoader={setShowLoader}
               />
             }
           />
@@ -209,7 +243,12 @@ const App = () => {
             path="/requests"
             exact
             element={
-              <Requests web3={web3} contract={contract} accounts={accounts} />
+              <Requests
+                web3={web3}
+                contract={contract}
+                accounts={accounts}
+                setShowLoader={setShowLoader}
+              />
             }
           />
         </Routes>

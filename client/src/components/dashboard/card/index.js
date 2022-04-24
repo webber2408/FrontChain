@@ -41,6 +41,7 @@ const ComponentCard = ({
   contract,
   accounts,
   isOwned,
+  setShowLoader,
 }) => {
   const [ownerName, setOwnerName] = useState(null);
   const [ownerAddress, setOwnerAddress] = useState(null);
@@ -62,7 +63,9 @@ const ComponentCard = ({
   };
 
   const buyComponent = async (cid) => {
+    setShowLoader(true);
     await contract.methods.purchaseComponent(cid).send({ from: accounts[0] });
+    setShowLoader(false);
     window.location.href = "/dashboard";
   };
 
@@ -119,7 +122,7 @@ const ComponentCard = ({
         <CardContent>
           <h1 className={classes.title}>{name}</h1>
           <h5>{description}</h5>
-          <h4>{price} Wei</h4>
+          <h4>{price} FRONT</h4>
         </CardContent>
         <CardActions>
           {!isOwned ? (
