@@ -16,7 +16,10 @@ const defaultValues = {
   // balance: null,
 };
 
-const getConvertedUserType = (userType) => {
+const getConvertedUserType = (userType, isCeo) => {
+  if (isCeo) {
+    return 2;
+  }
   switch (userType) {
     case "seller":
       return 0;
@@ -48,7 +51,7 @@ const Register = ({ web3, contract, accounts, setShowLoader, isCeo }) => {
     setShowLoader(true);
     const newUser = {
       ...formValues,
-      userType: getConvertedUserType(formValues.userType),
+      userType: getConvertedUserType(formValues.userType, isCeo),
       userId: uuid(),
     };
     try {
@@ -67,7 +70,6 @@ const Register = ({ web3, contract, accounts, setShowLoader, isCeo }) => {
   };
 
   const currentUser = JSON.parse(sessionStorage.getItem("USER_DETAILS"));
-  console.log(isCeo);
 
   return (
     <div className="register">
@@ -75,7 +77,7 @@ const Register = ({ web3, contract, accounts, setShowLoader, isCeo }) => {
         Hi {isCeo ? "(CEO) " : ""}
         {accounts && accounts[0]} !
       </h4>
-      {currentUser && currentUser.userId == "" && currentUser.name == "" && (
+      {currentUser && currentUser[0] == "" && currentUser[1] == "" && (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
           <div className="form-labels">Name</div>
           <TextField
@@ -128,7 +130,7 @@ const Register = ({ web3, contract, accounts, setShowLoader, isCeo }) => {
           </div>
         </form>
       )}
-      {currentUser && currentUser.userId != "" && currentUser.name != "" && (
+      {currentUser && currentUser[0] != "" && currentUser[1] != "" && (
         <div>You are already registered!</div>
       )}
     </div>

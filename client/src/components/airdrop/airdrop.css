@@ -1,0 +1,53 @@
+.airdrop-header {
+  display: flex;
+}
+
+.airdrop-header > Button {
+  font-size: 24px;
+  padding: 10px !important;
+  width: 25px !important;
+  min-width: 25px !important;
+  height: 25px;
+  border-radius: 100%;
+  margin-top: 18px;
+  margin-left: 10px;
+}
+
+#address-input,
+#amount-input {
+  min-width: 250px;
+  width: 250px !important;
+}
+
+.airdrop .textField {
+  margin-right: 20px !important;
+}
+
+.add-airdrop-form {
+  margin-bottom: 50px;
+}
+
+.add-airdrop-form > Button {
+  height: 56px;
+  margin-left: 10px;
+}
+
+.paper {
+  padding: 20px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+.paper_header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-weight: 500;
+  color: #6a6a6a;
+}
+.paper-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 32px;
+  padding-top: 14px;
+}

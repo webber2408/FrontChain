@@ -7,10 +7,11 @@ import Dashboard from "./components/dashboard";
 import Profile from "./components/profile";
 import AddComponent from "./components/addComponent";
 import getWeb3 from "./getWeb3";
-
-import "./App.css";
 import Requests from "./components/requests";
 import Loader from "./components/loader";
+
+import "./App.css";
+import Airdrop from "./components/airdrop";
 
 const App = () => {
   const [web3, setWeb3] = useState(null);
@@ -78,7 +79,7 @@ const App = () => {
 
   return (
     <div className="App">
-      {showLoader && <Loader />}
+      {/* {showLoader && <Loader />} */}
       <div
         style={{
           display: "flex",
@@ -160,6 +161,18 @@ const App = () => {
               >
                 Feature Requests
               </Button>
+
+              {isCeo && (
+                <Button
+                  variant={pathName == "/airdrop" ? "contained" : "default"}
+                  color="primary"
+                  onClick={() => {
+                    window.location.href = "/airdrop";
+                  }}
+                >
+                  Airdrop
+                </Button>
+              )}
 
               {/* <Button
                 variant={"default"}
@@ -244,6 +257,18 @@ const App = () => {
             exact
             element={
               <Requests
+                web3={web3}
+                contract={contract}
+                accounts={accounts}
+                setShowLoader={setShowLoader}
+              />
+            }
+          />
+          <Route
+            path="/airdrop"
+            exact
+            element={
+              <Airdrop
                 web3={web3}
                 contract={contract}
                 accounts={accounts}

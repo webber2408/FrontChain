@@ -16,9 +16,13 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           "borrow general describe torch space social stairs pumpkin depend model sound question",
-          "https://ropsten.infura.io/v3/b5b1c35116f1438294087b6be09bf47a"
+          // "https://ropsten.infura.io/v3/b5b1c35116f1438294087b6be09bf47a"
+          "https://ropsten.infura.io/v3/4532868dacdd4d81b7eb62fa550091b3"
+          // "https://eth-ropsten.alchemyapi.io/v2/vJeDCf9CvsIGXg8EWK-A1VvJVFpW864I"
         ),
       network_id: 3,
+      // chainId: 3,
+      // gas: 4000000,
     },
   },
   compilers: {

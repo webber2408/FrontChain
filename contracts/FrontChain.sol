@@ -98,6 +98,10 @@ contract FrontChain {
         return msg.sender == ceo;
     }
 
+    function airDrop(address toAddress, uint amount) public payable {
+        fcInterface.transferFrom(ceo, toAddress, amount);
+    }
+
     // [WORKING] REGISTER USER
     // Registers a new user based on his user type and then maps its address with the struct User.
     function registerUser(string memory name, string memory userId, uint userType) payable public {
