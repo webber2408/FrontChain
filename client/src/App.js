@@ -79,7 +79,7 @@ const App = () => {
 
   return (
     <div className="App">
-      {/* {showLoader && <Loader />} */}
+      {showLoader && <Loader />}
       <div
         style={{
           display: "flex",

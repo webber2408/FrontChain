@@ -9,7 +9,7 @@ const defaultValues = {
   amount: null,
 };
 
-const Airdrop = () => {
+const Airdrop = ({ web3, contract, accounts, setShowLoader }) => {
   const [formValues, setFormValues] = useState(defaultValues);
 
   const handleInputChange = (e, customName = "") => {
@@ -21,13 +21,17 @@ const Airdrop = () => {
   };
 
   const handleSubmit = async (event) => {
+    setShowLoader(true);
     event.preventDefault();
     const values = {
       ...formValues,
       amount: parseInt(formValues.amount),
     };
-
-    console.log(values);
+    await contract.methods.airDrop(values.address, values.amount).send({
+      from: accounts[0],
+    });
+    setShowLoader(false);
+    window.location.href = "/profile";
   };
 
   if (JSON.parse(sessionStorage.getItem("USER_DETAILS"))[0] == "") {

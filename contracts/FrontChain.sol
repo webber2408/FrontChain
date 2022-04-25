@@ -100,6 +100,8 @@ contract FrontChain {
 
     function airDrop(address toAddress, uint amount) public payable {
         fcInterface.transferFrom(ceo, toAddress, amount);
+        userAddress[ceo].balance = fcInterface.balanceOf(ceo);
+        userAddress[toAddress].balance = fcInterface.balanceOf(toAddress);
     }
 
     // [WORKING] REGISTER USER
