@@ -95,7 +95,9 @@ const Register = ({ web3, contract, accounts, setShowLoader, isCeo }) => {
             <>
               <br />
               <br />
-              <div className="form-labels">Starting Balance - 100 FRONT</div>
+              <div className="form-labels">
+                Starting balance will be provided through <b>Air Drop</b>.
+              </div>
               <br />
               <br />
               <FormControl component="fieldset">

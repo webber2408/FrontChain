@@ -4,8 +4,11 @@ pragma solidity ^0.8.12;
 
 interface FrontCoinInterface {
     function totalSupply() external view returns (uint256);
-    function transferFrom(address owner, address buyer, uint numTokens) external returns (bool);
+    function transfer(address sender, address receiver, uint numTokens) external returns (bool);
+    function transferFrom(address owner, address buyer, uint numTokens, address dealer) external returns (bool);
     function balanceOf(address tokenOwner) external view returns (uint);
+    function approve(address sender, address dealer, uint numTokens) external returns (bool);
+    function allowance(address owner, address dealer) external view returns (uint);
 }
 
 contract FrontChain {
@@ -62,7 +65,7 @@ contract FrontChain {
     // Transfer event for cryptocurrency transfer between two accounts.
     event Transfer(address indexed from, address indexed to, uint amount);
 
-    address public constant FC_ADDRESS = 0x4fD550913Dd3e93F8DD0312f92F47d5B3B50e8c8;
+    address public constant FC_ADDRESS = 0x690e47bAD8F972Dc1f2dFa1E0Ee9EAAbc49597B4;
     
     FrontCoinInterface fcInterface = FrontCoinInterface(FC_ADDRESS);
 
@@ -86,6 +89,15 @@ contract FrontChain {
         _;
     }
 
+    function approveDealer(uint numTokens) public returns (bool) {
+        fcInterface.approve(msg.sender, address(this), numTokens);
+        return true;
+    }
+
+    function getDealerAllowance(address buyer) public view returns (uint) {
+        return fcInterface.allowance(buyer, address(this));
+    }
+
     function getFCStartingBalance() view public returns (uint256, uint256) {
         return (fcInterface.totalSupply(), address(FC_ADDRESS).balance);
     }
@@ -98,8 +110,8 @@ contract FrontChain {
         return msg.sender == ceo;
     }
 
-    function airDrop(address toAddress, uint amount) public payable {
-        fcInterface.transferFrom(ceo, toAddress, amount);
+    function airDrop(address toAddress, uint amount) onlyCeo public payable {
+        fcInterface.transfer(ceo, toAddress, amount);
         userAddress[ceo].balance = fcInterface.balanceOf(ceo);
         userAddress[toAddress].balance = fcInterface.balanceOf(toAddress);
     }
@@ -115,15 +127,15 @@ contract FrontChain {
             newUser = User(name, userId, fcInterface.balanceOf(msg.sender), UserType.CEO);
         }else{
             // other user registering
-            fcInterface.transferFrom(ceo, msg.sender, 100);
+            // fcInterface.transferFrom(ceo, msg.sender, 100);
             
             // update balance of ceo after registration
-            userAddress[ceo].balance = fcInterface.balanceOf(ceo);
+            // userAddress[ceo].balance = fcInterface.balanceOf(ceo);
 
             if(userType == 0)
-                newUser = User(name, userId, 100, UserType.SELLER);
+                newUser = User(name, userId, 0, UserType.SELLER);
             else
-                newUser = User(name, userId, 100, UserType.BUYER);
+                newUser = User(name, userId, 0, UserType.BUYER);
         }
 
         // userId should not be null | Comparing userId string with Null String
@@ -201,7 +213,7 @@ contract FrontChain {
         componentOwner[componentId] = msg.sender;
 
         // Pay Owner
-        fcInterface.transferFrom(msg.sender, ownerAddress, componentDetails[componentId].price);
+        fcInterface.transferFrom(msg.sender, ownerAddress, componentDetails[componentId].price, address(this));
 
         // Change balances
         userAddress[msg.sender].balance = fcInterface.balanceOf(msg.sender); // BUYER

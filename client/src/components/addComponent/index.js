@@ -31,35 +31,38 @@ const AddComponent = ({ web3, contract, accounts, setShowLoader }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setShowLoader(true);
-    const newComponent = {
-      ...formValues,
-      componentId: uuid(),
-    };
-    // SAVE TO LOCAL JSON
-    await axios
-      .post(`http://localhost:8081/update-json`, newComponent, {
-        headers: {
-          "Access-Control-Allow-Origin": "http://localhost:8081",
-          "cache-control": "no-cache",
-        },
-      })
-      .then((res) => {
-        console.log(res);
-      });
+    try {
+      const newComponent = {
+        ...formValues,
+        componentId: uuid(),
+      };
+      // SAVE TO LOCAL JSON
+      await axios
+        .post(`http://localhost:8081/update-json`, newComponent, {
+          headers: {
+            "Access-Control-Allow-Origin": "http://localhost:8081",
+            "cache-control": "no-cache",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
 
-    // SAVE TO BLOCKCHAIN
-    await contract.methods
-      .publishComponent(
-        newComponent.name,
-        newComponent.componentId,
-        parseInt(newComponent.price),
-        newComponent.description
-      )
-      .send({ from: accounts[0] });
+      // SAVE TO BLOCKCHAIN
+      await contract.methods
+        .publishComponent(
+          newComponent.name,
+          newComponent.componentId,
+          parseInt(newComponent.price),
+          newComponent.description
+        )
+        .send({ from: accounts[0] });
 
-    setFormValues(defaultValues);
-    setShowLoader(false);
-    window.location.href = "/dashboard";
+      setFormValues(defaultValues);
+    } finally {
+      setShowLoader(false);
+      window.location.href = "/dashboard";
+    }
   };
 
   return (

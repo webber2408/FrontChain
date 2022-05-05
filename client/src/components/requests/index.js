@@ -41,25 +41,28 @@ const Requests = ({ web3, contract, accounts, setShowLoader }) => {
     event.preventDefault();
     setShowLoader(true);
 
-    const newRequest = {
-      ...formValues,
-      reqId: uuid(),
-      timestamp: new Date().toLocaleDateString("en-US", dateOptions),
-    };
+    try {
+      const newRequest = {
+        ...formValues,
+        reqId: uuid(),
+        timestamp: new Date().toLocaleDateString("en-US", dateOptions),
+      };
 
-    // SAVE TO BLOCKCHAIN
-    await contract.methods
-      .addRequest(
-        newRequest.description,
-        newRequest.reqId,
-        newRequest.timestamp
-      )
-      .send({ from: accounts[0] });
+      // SAVE TO BLOCKCHAIN
+      await contract.methods
+        .addRequest(
+          newRequest.description,
+          newRequest.reqId,
+          newRequest.timestamp
+        )
+        .send({ from: accounts[0] });
 
-    setFormValues(defaultValues);
-    setShowAddForm(false);
-    getAlRequests();
-    setShowLoader(false);
+      setFormValues(defaultValues);
+      setShowAddForm(false);
+      getAlRequests();
+    } finally {
+      setShowLoader(false);
+    }
   };
 
   const toggleForm = () => {

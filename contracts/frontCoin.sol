@@ -11,9 +11,11 @@ contract FrontCoin {
    
     address ERCowner; //#1
 
+    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
     event Transfer(address indexed from, address indexed to, uint tokens);
 
     mapping(address => uint256) balances;
+    mapping(address => mapping (address => uint256)) allowed;
     
     uint256 totalSupply_;
 
@@ -33,11 +35,33 @@ contract FrontCoin {
         return balances[tokenOwner];
     }
 
-    function transferFrom(address owner, address buyer, uint numTokens) public returns (bool) {
-        balances[owner] = balances[owner].sub(numTokens);
-        balances[buyer] = balances[buyer].add(numTokens);
-        emit Transfer(owner, buyer, numTokens);
+    function transfer(address sender, address receiver, uint numTokens) payable public returns (bool) {
+        require(numTokens <= balances[sender], "Insufficient Sender Balance!");
+        balances[sender] = balances[sender].sub(numTokens);
+        balances[receiver] = balances[receiver].add(numTokens);
+        emit Transfer(sender, receiver, numTokens);
         return true;
+    }
+
+    function transferFrom(address buyer, address seller, uint numTokens, address dealer) public returns (bool) {
+        require(numTokens <= balances[buyer], "Insufficient Balance!"); 
+        require(numTokens <= allowed[buyer][dealer], "Insufficient Allowance!");
+
+        balances[buyer] = balances[buyer].sub(numTokens);
+        allowed[buyer][dealer] = allowed[buyer][dealer].sub(numTokens);
+        balances[seller] = balances[seller].add(numTokens);
+        emit Transfer(buyer, seller, numTokens);
+        return true;
+    }
+
+    function approve(address sender, address dealer, uint numTokens) public returns (bool) {
+        allowed[sender][dealer] = numTokens;
+        emit Approval(sender, dealer, numTokens);
+        return true;
+    }
+
+    function allowance(address owner, address dealer) public view returns (uint) {
+        return allowed[owner][dealer];
     }
  
 }

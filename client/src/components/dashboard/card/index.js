@@ -4,8 +4,13 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
+import WarningIcon from "@material-ui/icons/Warning";
+
 import { getParameters } from "codesandbox/lib/api/define";
+
 import axios from "axios";
+
+import "./styles.css";
 
 const useStyles = makeStyles({
   root: {
@@ -42,6 +47,7 @@ const ComponentCard = ({
   accounts,
   isOwned,
   setShowLoader,
+  dealerAllowance,
 }) => {
   const [ownerName, setOwnerName] = useState(null);
   const [ownerAddress, setOwnerAddress] = useState(null);
@@ -64,9 +70,12 @@ const ComponentCard = ({
 
   const buyComponent = async (cid) => {
     setShowLoader(true);
-    await contract.methods.purchaseComponent(cid).send({ from: accounts[0] });
-    setShowLoader(false);
-    window.location.href = "/dashboard";
+    try {
+      await contract.methods.purchaseComponent(cid).send({ from: accounts[0] });
+    } finally {
+      setShowLoader(false);
+      window.location.href = "/dashboard";
+    }
   };
 
   const onUnlock = async (cid) => {
@@ -127,6 +136,27 @@ const ComponentCard = ({
         <CardActions>
           {!isOwned ? (
             <>
+              {!!dealerAllowance &&
+                parseInt(dealerAllowance) <= parseInt(price) && (
+                  <div class="tooltip">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#f39019",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <WarningIcon style={{ color: "#f39019" }} /> Warning!
+                    </div>
+
+                    <span class="tooltiptext">
+                      Transaction might fail as you don't have enough allowance.
+                      Currently short by {price - dealerAllowance} FRONT.
+                      Consider approving more FRONT allowance.
+                    </span>
+                  </div>
+                )}
               <Button
                 variant="outlined"
                 color="primary"
@@ -134,6 +164,7 @@ const ComponentCard = ({
               >
                 Buy
               </Button>
+
               <Button variant="outlined" onClick={() => onViewOwner(cid)}>
                 {ownerName ? "Hide" : "View"} Owner
               </Button>
